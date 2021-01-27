@@ -1,0 +1,61 @@
+DKIM Automation
+redseerconsulting.com
+qp-redseerconsulting
+$1 -> domain
+$2 -> selector
+
+login on devops2
+/web/config/kickstart/etc/dkim_common/
+
+opendkim-genkey -s $2 -d $1
+cat "$2._domainkey.$1 redseerconsulting.com:qp-redseerconsulting:/etc/opendkim/keys/qp-redseerconsulting.private" >> KeyTable
+opendkim-genkey -s qp-redseerconsulting -d redseerconsulting.com
+
+
+KeyTable
+qp-redseerconsulting._domainkey.redseerconsulting.com redseerconsulting.com:qp-redseerconsulting:/etc/opendkim/keys/qp-redseerconsulting.private
+
+SigningTable
+*@redseerconsulting.com qp-redseerconsulting._domainkey.redseerconsulting.com
+
+TrustedHosts
+*.redseerconsulting.com
+
+
+free -mh
+lscpu
+
+
+devops --- decoumentation----infrastructere diagram -- drwa.io ---data cententer network diagram ---- data center racktables.
+
+
+
+
+           for i in qpmail1 qpmail2 qpmail3 qpsysmail1 qpsysmail2; do echo $i; myscp keys/qp-mag_com.* $i:/etc/opendkim/keys/; myscp -pr {KeyTable,SigningTable,TrustedHosts} $i:/etc/opendkim/; myssh $i "chown opendkim:opendkim /etc/opendkim/keys/qp-mag_com.private"; myssh $i "chown root:root /etc/opendkim/keys/qp-mag_com.txt";echo; done
+
+for i in qpmail1 qpmail2 qpmail3 qpsysmail1 qpsysmail2; do echo $i;myssh $i.questionpro.net "systemctl restart opendkim.service"; done
+
+
+
+opendkim-genkey -s qp-mag_com -d mag.com.br
+
+qp-mag_com._domainkey.mag.com.br mag.com.br:qp-mag_com:/etc/opendkim/keys/qp-mag_com.private
+
+*@mag.com.br qp-mag_com._domainkey.mag.com.br
+
+*.mag.com.br
+
+
+
+
+
+Hi Aditya,
+We have created the DKIM keys for the client domain i.e  mag.com.br. Please ask the client to follow the following steps.
+1. Add the below DKIM key to their domains i.e "mag.com.br"
+Selector: qp-mag_com._domainkey
+Key: "v=DKIM1; k=rsa; "
+"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCT42se7cMvJF4Uj+haFx801Y1MrAPH5tnzj7QpqrGkW2c7Zt3GMCXRLbjlN/pAO29SiE2sNU3GOcdsbipep8A6UY0ZbsDuvKf5ozi+b77w8ixF68ZCRH9IzX3k0Rr6cymzuefpag+0BkoSwxt93xU3+aoRf5Av/f/zYh2jHbjP8QIDAQAB"
+If required, ask them to take the necessary help from their network team for adding the SPF record & DKIM keys.
+2. Verify the key is added or not from https://protodave.com/tools/dkim-key-checker/ site.
+3. Please follow the belw help file to verify the DKIM setup.
+Help file:- https://www.questionpro.com/help/dkim.html
