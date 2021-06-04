@@ -10,7 +10,7 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: kubectl get pods -A
+- script: az aks get-credentials --resource-group kubernetes-test --name kuberentes_test
   displayName: 'Run a one-line script'
 
 - script: |
